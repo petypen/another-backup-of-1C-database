@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace another_backup_of_1C_database
@@ -8,17 +9,19 @@ namespace another_backup_of_1C_database
     {
         static void Main(string[] args)
         {
-            var services = new ServiceCollection();
-            ConfigureServices(services);
-            using ServiceProvider serviceProvider = services.BuildServiceProvider();
-            MyApplication app = serviceProvider.GetService<MyApplication>();
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+            using ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
+            Application application = serviceProvider.GetService<Application>();
 
-            app.Run();
+            application.Run();
         }
 
-        private static void ConfigureServices(ServiceCollection services)
+        private static void ConfigureServices(ServiceCollection serviceCollection)
         {
-            services.AddLogging(configure => configure.AddConsole()).AddTransient<MyApplication>();
+            serviceCollection.AddLogging(configure => configure.AddConsole()).AddTransient<Application>();
+           
+            serviceCollection.AddSingleton<Settings>();
         }
     }
 }
